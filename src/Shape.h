@@ -30,11 +30,11 @@ public:
 
 	inline virtual double intersect(Ray &ray) {
 		double Vd = invnormal.dot(ray.direction);
-	//	if (Vd > 0) {
+		if (Vd > 0) {
 			return -(invnormal.dot(ray.source) + D) / Vd;
-	//	}
+		}
 
-		//return -1;
+		return -1;
 	}
 
 	inline virtual Vector3d getNormal(Vector3d &point) {
