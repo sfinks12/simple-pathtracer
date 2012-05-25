@@ -28,8 +28,9 @@ public:
 	virtual ~Renderer();
 
 	void iterate(Mat& output, Camera &cam, vector<Body> &objects);
-	void trace(Ray& ray, vector<Body> &objects, int n, Vec3f& color);
+	void trace(Ray& ray, vector<Body> &objects, int n, Vector3d& color);
 
 };
+
 
 #endif /* RENDERER_H_ */
