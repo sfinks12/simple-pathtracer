@@ -20,6 +20,32 @@ public:
 	virtual Vector3d getNormal(Vector3d &point) = 0;
 };
 
+#include <iostream>
+class Plane: public IShape {
+public:
+	Plane(Vector3d _normal, double _D) :
+			normal(_normal), D(_D) {
+		invnormal = normal*-1;
+	}
+
+	inline virtual double intersect(Ray &ray) {
+		double Vd = invnormal.dot(ray.direction);
+	//	if (Vd > 0) {
+			return -(invnormal.dot(ray.source) + D) / Vd;
+	//	}
+
+		//return -1;
+	}
+
+	inline virtual Vector3d getNormal(Vector3d &point) {
+		return normal;
+	}
+
+	Vector3d normal;
+	Vector3d invnormal;
+	double D;
+};
+
 class Sphere: public IShape {
 public:
 	Sphere(Vector3d _center, double _radius) :
@@ -44,9 +70,6 @@ public:
 	double radius2;
 };
 
-inline Vector3d div(Vector3d a, Vector3d b) {
-	return Vector3d(a.x / b.x, a.y / b.y, a.z / b.z);
-}
 inline Vector3d min(Vector3d a, Vector3d b) {
 	return Vector3d(min(a.x, b.x), min(a.y, b.y), min(a.z, b.z));
 }
@@ -61,8 +84,8 @@ public:
 	}
 
 	inline virtual double intersect(Ray &ray) {
-		Vector3d tMin = (cubeMin - ray.source)/ ray.direction;
-		Vector3d tMax = (cubeMax - ray.source)/ ray.direction;
+		Vector3d tMin = (cubeMin - ray.source) / ray.direction;
+		Vector3d tMax = (cubeMax - ray.source) / ray.direction;
 		Vector3d t1 = min(tMin, tMax);
 		Vector3d t2 = max(tMin, tMax);
 		double tNear = max(t1.x, max(t1.y, t1.z));
