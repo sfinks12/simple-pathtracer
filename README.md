@@ -2,6 +2,7 @@ simple-pathtracer
 =================
 
 Supported objects:
+* Plane
 * Sphere
 * Cube
 
