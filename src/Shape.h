@@ -14,21 +14,69 @@
 
 using namespace std;
 
-class IShape {
-public:
-	virtual double intersect(Ray &ray) = 0;
-	virtual Vector3d getNormal(Vector3d &point) = 0;
-};
 
-#include <iostream>
-class Plane: public IShape {
+class Triangle{
 public:
-	Plane(Vector3d _normal, double _D) :
-			normal(_normal), D(_D) {
-		invnormal = normal*-1;
+	Triangle(Vector3d _v1, Vector3d _v2, Vector3d _v3) :
+			v1(_v1), v2(_v2), v3(_v3) {
+		normal = ((v3 - v2).cross(v1 - v2)).norm();
+		invnormal = normal * -1;
+		D = normal.dot(v1);
 	}
 
-	inline virtual double intersect(Ray &ray) {
+	inline double intersect(Ray &ray) {
+
+		Vector3d e1 = v2 - v1;
+		Vector3d e2 = v3 - v1;
+
+		Vector3d pvec = ray.direction.cross(e2);
+
+		double det = e1.dot(pvec);
+
+		if (det < 0.1) {
+			return -1;
+		}
+
+		Vector3d tvec = ray.source - v1;
+
+		double u = tvec.dot(pvec);
+
+		if (u < 0 || u > det)
+			return -1;
+
+		Vector3d qvec = tvec.cross(e1);
+
+		double v = ray.direction.dot(qvec);
+
+		if (v < 0 || u + v > det)
+			return -1;
+
+		double t = e2.dot(qvec);
+
+		return t / det;
+	}
+
+	inline Vector3d getNormal(Vector3d &point) {
+		return normal;
+	}
+
+	Vector3d normal;
+	Vector3d invnormal;
+	Vector3d v1, v2, v3;
+	double D;
+};
+
+class Plane {
+public:
+	Plane(Vector3d _normal, double _D) :
+			normal(_normal.norm()), D(_D) {
+		Q = normal * D;
+		invnormal = normal * -1;
+	}
+
+	inline double intersect(Ray &ray) {
+		//return (normal.dot(Q - ray.source)) / (ray.source.dot(ray.direction));
+
 		double Vd = invnormal.dot(ray.direction);
 		if (Vd > 0) {
 			return -(invnormal.dot(ray.source) + D) / Vd;
@@ -37,23 +85,24 @@ public:
 		return -1;
 	}
 
-	inline virtual Vector3d getNormal(Vector3d &point) {
+	inline Vector3d getNormal(Vector3d &point) {
 		return normal;
 	}
 
 	Vector3d normal;
 	Vector3d invnormal;
+	Vector3d Q;
 	double D;
 };
 
-class Sphere: public IShape {
+class Sphere {
 public:
 	Sphere(Vector3d _center, double _radius) :
 			center(_center), radius(_radius) {
 		radius2 = _radius * _radius;
 	}
 
-	inline virtual double intersect(Ray &ray) {
+	inline double intersect(Ray &ray) {
 		Vector3d distVect = ray.source - this->center;
 		double b = distVect.dot(ray.direction);
 		double c = distVect.dot(distVect) - this->radius2;
@@ -61,7 +110,7 @@ public:
 		return d > 0 ? -b - sqrt(d) : -1;
 	}
 
-	inline virtual Vector3d getNormal(Vector3d &point) {
+	inline Vector3d getNormal(Vector3d &point) {
 		return (point - this->center).norm();
 	}
 
@@ -70,9 +119,7 @@ public:
 	double radius2;
 };
 
-
-
-class Cube: public IShape {
+class Cube {
 public:
 	Cube(Vector3d _cubeMin, Vector3d _cubeMax) :
 			cubeMin(_cubeMin), cubeMax(_cubeMax) {

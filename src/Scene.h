@@ -52,6 +52,9 @@ public:
 	vector<Body<Plane> > planes;
 	vector<Body<Cube> > cubes;
 
+	vector<Body<Triangle> > triangles;
+
+
 
 	Scene();
 	virtual ~Scene();

@@ -41,8 +41,6 @@ void Renderer::trace(Ray& ray, Scene &scene, int n, Vector3d& color) {
 	int i = 0;
 	for (; i < 64; ++i) {
 
-		double t = getTickCount();
-
 		Material *material = NULL;
 		mind = 99999999;
 		double d = 0;
@@ -78,6 +76,17 @@ void Renderer::trace(Ray& ray, Scene &scene, int n, Vector3d& color) {
 				material = obj.material;
 			}
 		}
+
+		for (size_t j = 0, lim = scene.triangles.size(); j < lim; ++j) {
+					Body<Triangle> &obj = scene.triangles[j];
+					d = obj.shape.intersect(ray);
+					if (d > 0 && d <= mind) {
+						mind = d;
+						point = ray.source + ray.direction * mind;
+						normal = obj.shape.getNormal(point);
+						material = obj.material;
+					}
+				}
 
 		if (mind > 100000) {
 			break;
