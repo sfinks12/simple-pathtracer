@@ -23,17 +23,43 @@ void Renderer::iterate(Mat& output, Camera &cam, Scene &scene) {
 	double w = output.cols;
 	double h = output.rows;
 
-	Vector3d *ptr = (Vector3d*) output.ptr(0);
-	for (double y = (1.0 * rand() / RAND_MAX) / h, ystep = 1.0 / h;
-			y < 0.9999999; y += ystep) {
-		cout<< "row"<<endl;
+	static int step = 16;
+	static int iter = 1;
+	if (!(iter++ % 8)) {
+		step = max(step / 4, 1);
+	}
+
+	int iy = 0;
+	int ix = 0;
+	w /= step;
+	h /= step;
+
+	Mat small(h, w, CV_64FC3, Scalar(0));
+
+	double ystep = 1.0 / h;
+	double yinit = (1.0 * rand() / RAND_MAX) / h;
+	int hi = h;
+#pragma omp parallel for schedule(dynamic, 1)
+	for (int i = 0; i < hi; i++) {
+//	for (double y = (1.0 * rand() / RAND_MAX) / h, ystep = 1.0 / h;
+//			y < 0.9999999; y += ystep) {
+//		cout << "row" << endl;
+		double y = yinit + i * ystep;
+		Vector3d *ptr = (Vector3d*) small.ptr<Vector3d>(i, 0);
 		for (double x = (1.0 * rand() / RAND_MAX) / w, xstep = 1.0 / w;
 				x < 0.9999999; x += xstep) {
+			Vector3d color(0, 0, 0);
 			Ray ray = cam.getRay(x, y);
-			trace(ray, scene, 0, *(ptr++));
-
+			trace(ray, scene, 0, color);
+			*(ptr++) += color;
 		}
 	}
+
+//	imshow("small",small);
+//	waitKey(0);
+
+	resize(small.clone(), small, Size(), step, step);
+	output += small;
 }
 void Renderer::trace(Ray& ray, Scene &scene, int n, Vector3d& color) {
 
@@ -82,15 +108,15 @@ void Renderer::trace(Ray& ray, Scene &scene, int n, Vector3d& color) {
 		}
 
 		for (size_t j = 0, lim = scene.triangles.size(); j < lim; ++j) {
-					Body<Triangle> &obj = scene.triangles[j];
-					d = obj.shape.intersect(ray);
-					if (d > 0 && d <= mind) {
-						mind = d;
-						point = ray.source + ray.direction * mind;
-						normal = obj.shape.getNormal(point);
-						material = obj.material;
-					}
-				}
+			Body<Triangle> &obj = scene.triangles[j];
+			d = obj.shape.intersect(ray);
+			if (d > 0 && d <= mind) {
+				mind = d;
+				point = ray.source + ray.direction * mind;
+				normal = obj.shape.getNormal(point);
+				material = obj.material;
+			}
+		}
 
 		if (mind > 100000) {
 			break;

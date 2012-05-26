@@ -21,12 +21,12 @@ int main(int argc, char** argv) {
 //	vector<Body> objs;
 	srand(getTickCount());
 
-	for (int i = 0; i < 5; ++i) {
+	for (int i = 0; i < 1; ++i) {
 		scene.spheres.push_back(
 				Body<Sphere>(
 						Sphere(
 								Vector3d(1.5 - (3.0 * rand() / RAND_MAX),
-										1 + (2.0 * rand() / RAND_MAX), 0), 0.5),
+										1 + (2.0 * rand() / RAND_MAX), -0.5), 0.5),
 						new Chrome(
 								Vector3d(0.5 + 0.5 * rand() / RAND_MAX,
 										0.5 + 0.5 * rand() / RAND_MAX,
@@ -36,7 +36,7 @@ int main(int argc, char** argv) {
 				Body<Sphere>(
 						Sphere(
 								Vector3d(1. - (2.0 * rand() / RAND_MAX),
-										0.5 + (1.5 * rand() / RAND_MAX), -0.25),
+										0.5 + (1.5 * rand() / RAND_MAX), -0.75),
 								0.25),
 						new Glass(
 								Vector3d(0.8 + 0.2 * rand() / RAND_MAX,
@@ -46,7 +46,7 @@ int main(int argc, char** argv) {
 
 		Vector3d pos(1.5 - (3.0 * rand() / RAND_MAX),
 				1.5 + (2.0 * rand() / RAND_MAX),
-				1. + (2.0 * rand() / RAND_MAX));
+				-0.5 + (2.0 * rand() / RAND_MAX));
 
 		scene.cubes.push_back(
 				Body<Cube>(
@@ -55,11 +55,11 @@ int main(int argc, char** argv) {
 										+ Vector3d(
 												0.5 + 1.0 * rand() / RAND_MAX,
 												0.5 + 1.0 * rand() / RAND_MAX,
-												0.5 + 1.0 * rand() / RAND_MAX)),
+												0.0 + 1.0 * rand() / RAND_MAX)),
 						new Material(
 								Vector3d(0.5 + 0.5 * rand() / RAND_MAX,
 										0.5 + 0.5 * rand() / RAND_MAX,
-										0.5 + 0.5 * rand() / RAND_MAX),
+										0.0 + 0.5 * rand() / RAND_MAX),
 								Vector3d(0, 0, 0))));
 	}
 
@@ -107,11 +107,11 @@ int main(int argc, char** argv) {
 
 	scene.planes.push_back(
 			Body<Plane>(Plane(Vector3d(0.0, -1, 0.0), -4.5),
-//					new Material(Vector3d(0.9, 0.9, 0.9), Vector3d(0, 0, 0))));
-										new Chrome(
-												Vector3d(0.9,
-														0.9,
-														0.9))));
+					new Material(Vector3d(0.9, 0.9, 0.9), Vector3d(0, 0, 0))));
+//										new Chrome(
+//												Vector3d(0.9,
+//														0.9,
+//														0.9))));
 
 
 	scene.planes.push_back(
@@ -132,24 +132,25 @@ int main(int argc, char** argv) {
 							Vector3d(1.29, 1.47, 1.6))));
 
 	Renderer renderer;
-	for (int i = 0; i < 100; ++i) {
+
+	for (int i = 0; i < 1000; ++i) {
 
 		double t = getTickCount();
 		renderer.iterate(img, cam, scene);
 		cout << "Render time: "
 				<< ((getTickCount() - t) / getTickFrequency()) * 1000.0 << endl;
 
-		//objs[0].shape.center.x = sin(i/20.0);
-		//objs[0].shape.center.y = 2+ cos(i/20.0);
+//		//objs[0].shape.center.x = sin(i/20.0);
+//		//objs[0].shape.center.y = 2+ cos(i/20.0);
 		Mat out;
-		//resize(img / (i + 1), out, Size(), 2, 2);
+//		//resize(img / (i + 1), out, Size(), 2, 2);
 		out = img / (i + 1);
-		imshow("out", out);
+//		imshow("out", out);
 		imwrite("out.jpg", (img / (i + 1)) * 255);
-		char c = waitKey(1);
-		if (c == 27) {
-			break;
-		}
+//		char c = waitKey(1);
+//		if (c == 27) {
+//			break;
+//		}
 	}
 	return 0;
 }

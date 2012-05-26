@@ -32,9 +32,9 @@ public:
 
 		double det = e1.dot(pvec);
 
-//		if (det < 0.00000001 && det > -0.0000001) {
-//			return -1;
-//		}
+		if (det > -0.00000001 ){//&& det > -0.0000001) {
+			return -1;
+		}
 
 		double inv_det = 1.0 / det;
 
