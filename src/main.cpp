@@ -67,7 +67,7 @@ int main(int argc, char** argv) {
 	//Y depth
 	//Z up
 
-		ObjReader oReader("teapot.obj");
+		ObjReader oReader("data/teapot.obj");
 
 		for(int i = 0; i < oReader.triangles.size(); ++i){
 				scene.triangles.push_back(
@@ -133,7 +133,7 @@ int main(int argc, char** argv) {
 
 	Renderer renderer;
 
-	for (int i = 0; i < 1000; ++i) {
+	for (int i = 0; i < 5000; ++i) {
 
 		double t = getTickCount();
 		renderer.iterate(img, cam, scene);
