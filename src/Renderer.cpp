@@ -16,7 +16,7 @@ Renderer::~Renderer() {
 	// TODO Auto-generated destructor stub
 }
 
-void Renderer::iterate(Mat& output, Camera &cam, vector<Body> &objects) {
+void Renderer::iterate(Mat& output, Camera &cam, Scene &scene) {
 	double w = output.cols;
 	double h = output.rows;
 
@@ -26,12 +26,12 @@ void Renderer::iterate(Mat& output, Camera &cam, vector<Body> &objects) {
 		for (double x = (1.0 * rand() / RAND_MAX) / w, xstep = 1.0 / w;
 				x < 0.9999999; x += xstep) {
 			Ray ray = cam.getRay(x, y);
-			trace(ray, objects, 0, *(ptr++));
+			trace(ray, scene, 0, *(ptr++));
 
 		}
 	}
 }
-void Renderer::trace(Ray& ray, vector<Body> &objects, int n, Vector3d& color) {
+void Renderer::trace(Ray& ray, Scene &scene, int n, Vector3d& color) {
 
 	double mind = 9999999;
 	register Vector3d colorMask(1.0, 1.0, 1.0);
@@ -42,32 +42,56 @@ void Renderer::trace(Ray& ray, vector<Body> &objects, int n, Vector3d& color) {
 	for (; i < 64; ++i) {
 
 		double t = getTickCount();
-		Body* hit = NULL;
+
+		Material *material = NULL;
 		mind = 99999999;
 		double d = 0;
-		for (size_t j = 0, lim = objects.size(); j < lim; ++j) {
-			Body &obj = objects[j];
-			d = obj.shape->intersect(ray);
+		for (size_t j = 0, lim = scene.planes.size(); j < lim; ++j) {
+			Body<Plane> &obj = scene.planes[j];
+			d = obj.shape.intersect(ray);
 			if (d > 0 && d <= mind) {
 				mind = d;
-				hit = &obj;
+				point = ray.source + ray.direction * mind;
+				normal = obj.shape.getNormal(point);
+				material = obj.material;
 			}
 		}
-		if (hit == NULL) {
+
+		for (size_t j = 0, lim = scene.spheres.size(); j < lim; ++j) {
+			Body<Sphere> &obj = scene.spheres[j];
+			d = obj.shape.intersect(ray);
+			if (d > 0 && d <= mind) {
+				mind = d;
+				point = ray.source + ray.direction * mind;
+				normal = obj.shape.getNormal(point);
+				material = obj.material;
+			}
+		}
+
+		for (size_t j = 0, lim = scene.cubes.size(); j < lim; ++j) {
+			Body<Cube> &obj = scene.cubes[j];
+			d = obj.shape.intersect(ray);
+			if (d > 0 && d <= mind) {
+				mind = d;
+				point = ray.source + ray.direction * mind;
+				normal = obj.shape.getNormal(point);
+				material = obj.material;
+			}
+		}
+
+		if (mind > 100000) {
 			break;
 		}
 
-		point = ray.source + ray.direction * mind;
-		normal = hit->shape->getNormal(point);
-		direction = hit->material->bounce(ray, normal);
+		direction = material->bounce(ray, normal);
 
 		ray.source = point;
 		ray.direction = direction;
 
-		accColor = accColor + colorMask * (hit->material->emission);
-		colorMask = colorMask * (hit->material->color);
+		accColor = accColor + colorMask * (material->emission);
+		colorMask = colorMask * (material->color);
 
-		if (hit->material->emission.sum() > 1)
+		if (material->emission.sum() > 1)
 			break;
 	}
 	color += accColor;

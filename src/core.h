@@ -13,7 +13,6 @@
 
 using namespace std;
 
-
 class Vector3d {
 public:
 	double x, y, z;
@@ -72,13 +71,12 @@ public:
 
 };
 
-inline Vector3d min(Vector3d a, Vector3d b) {
+inline Vector3d min(Vector3d &a, Vector3d &b) {
 	return Vector3d(min(a.x, b.x), min(a.y, b.y), min(a.z, b.z));
 }
-inline Vector3d max(Vector3d a, Vector3d b) {
+inline Vector3d max(Vector3d &a, Vector3d &b) {
 	return Vector3d(max(a.x, b.x), max(a.y, b.y), max(a.z, b.z));
 }
-
 
 //inline Vector3d normalize(Vector3d &point) {
 //	return point * (1.0 / (sqrt(point.dot(point))));

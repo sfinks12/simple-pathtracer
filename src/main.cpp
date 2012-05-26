@@ -15,13 +15,15 @@ int main(int argc, char** argv) {
 	Camera cam(Vector3d(0, -0.5, 0), Vector3d(-1.3, 1.0, 1.0),
 			Vector3d(1.3, 1.0, 1.0), Vector3d(-1.3, 1.0, -1.0));
 
-	vector<Body> objs;
+	Scene scene;
+
+//	vector<Body> objs;
 	srand(getTickCount());
 
 	for (int i = 0; i < 5; ++i) {
-		objs.push_back(
-				Body(
-						new Sphere(
+		scene.spheres.push_back(
+				Body<Sphere>(
+						Sphere(
 								Vector3d(1.5 - (3.0 * rand() / RAND_MAX),
 										1 + (2.0 * rand() / RAND_MAX), 0), 0.5),
 						new Chrome(
@@ -29,9 +31,9 @@ int main(int argc, char** argv) {
 										0.5 + 0.5 * rand() / RAND_MAX,
 										0.5 + 0.5 * rand() / RAND_MAX))));
 
-		objs.push_back(
-				Body(
-						new Sphere(
+		scene.spheres.push_back(
+				Body<Sphere>(
+						Sphere(
 								Vector3d(1. - (2.0 * rand() / RAND_MAX),
 										0.5 + (1.5 * rand() / RAND_MAX), -0.25),
 								0.25),
@@ -45,44 +47,52 @@ int main(int argc, char** argv) {
 				1.5 + (2.0 * rand() / RAND_MAX),
 				1. + (2.0 * rand() / RAND_MAX));
 
-objs	.push_back(
-			Body(new Cube(pos, pos + Vector3d(0.5+1.0 * rand() / RAND_MAX, 0.5+1.0 * rand() / RAND_MAX, 0.5+1.0 * rand() / RAND_MAX)),
-											new Material(
-													Vector3d(0.5 + 0.5 * rand() / RAND_MAX,
-															0.5 + 0.5 * rand() / RAND_MAX,
-															0.5 + 0.5 * rand() / RAND_MAX),
-													Vector3d(0, 0, 0))));
+		scene.cubes.push_back(
+				Body<Cube>(
+						Cube(pos,
+								pos
+										+ Vector3d(
+												0.5 + 1.0 * rand() / RAND_MAX,
+												0.5 + 1.0 * rand() / RAND_MAX,
+												0.5 + 1.0 * rand() / RAND_MAX)),
+						new Material(
+								Vector3d(0.5 + 0.5 * rand() / RAND_MAX,
+										0.5 + 0.5 * rand() / RAND_MAX,
+										0.5 + 0.5 * rand() / RAND_MAX),
+								Vector3d(0, 0, 0))));
 
-						}
+	}
 
-
-	objs.push_back(
-			Body(new Plane(Vector3d(0.0, 0.0, 1.0), -1),
+	scene.planes.push_back(
+			Body<Plane>(Plane(Vector3d(0.0, 0.0, 1.0), -1),
 					new Material(Vector3d(0.9, 0.9, 0.9), Vector3d(0, 0, 0))));
 
-	objs.push_back(
-			Body(new Plane(Vector3d(0.0, -1, 0.0), -4.5),
+	scene.planes.push_back(
+			Body<Plane>(Plane(Vector3d(0.0, -1, 0.0), -4.5),
 					new Material(Vector3d(0.9, 0.9, 0.9), Vector3d(0, 0, 0))));
 
-	objs.push_back(
-			Body(new Plane(Vector3d(1, 0.0, 0.0), -1.9),
+	scene.planes.push_back(
+			Body<Plane>(Plane(Vector3d(0.0, 1, 0.0), -1.5),
+					new Material(Vector3d(0.5, 0.9, 0.5), Vector3d(0, 0, 0))));
+
+	scene.planes.push_back(
+			Body<Plane>(Plane(Vector3d(1, 0.0, 0.0), -1.9),
 					new Material(Vector3d(0.9, 0.5, 0.5), Vector3d(0, 0, 0))));
 
-	objs.push_back(
-			Body(new Plane(Vector3d(-1, 0.0, 0.0), -1.9),
+	scene.planes.push_back(
+			Body<Plane>(Plane(Vector3d(-1, 0.0, 0.0), -1.9),
 					new Material(Vector3d(0.5, 0.5, 0.9), Vector3d(0, 0, 0))));
 
-	objs.push_back(
-			Body(new Plane(Vector3d(0.0, 0.0, -1), -2.5),
+	scene.planes.push_back(
+			Body<Plane>(Plane(Vector3d(0.0, 0.0, -1), -2.5),
 					new Material(Vector3d(1.0, 1.0, 1.0),
 							Vector3d(1.29, 1.47, 1.6))));
 
-
 	Renderer renderer;
-	for (int i = 0; i < 1000; ++i) {
+	for (int i = 0; i < 10; ++i) {
 
 		double t = getTickCount();
-		renderer.iterate(img, cam, objs);
+		renderer.iterate(img, cam, scene);
 		cout << "Render time: "
 				<< ((getTickCount() - t) / getTickFrequency()) * 1000.0 << endl;
 

@@ -27,8 +27,8 @@ public:
 	Renderer();
 	virtual ~Renderer();
 
-	void iterate(Mat& output, Camera &cam, vector<Body> &objects);
-	void trace(Ray& ray, vector<Body> &objects, int n, Vector3d& color);
+	void iterate(Mat& output, Camera &cam, Scene &scene);
+	void trace(Ray& ray,  Scene &scene, int n, Vector3d& color);
 
 };
 

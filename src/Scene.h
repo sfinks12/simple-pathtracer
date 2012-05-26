@@ -14,9 +14,7 @@
 #include "Shape.h"
 #include "Material.h"
 
-
 using namespace std;
-
 
 class Camera {
 public:
@@ -37,25 +35,26 @@ public:
 	Vector3d xDirection, yDirection;
 };
 
-
+template<class ShapeType>
 class Body {
 public:
-	Body(IShape *_shape, Material *_material) :
+	Body(ShapeType _shape, Material *_material) :
 			shape(_shape), material(_material) {
 	}
-	IShape *shape; // TODO: interface it.
+	ShapeType shape; // TODO: interface it.
 	Material *material;
 
 };
 
 class Scene {
 public:
-	vector<Body> objects;
+	vector<Body<Sphere> > spheres;
+	vector<Body<Plane> > planes;
+	vector<Body<Cube> > cubes;
 
 
 	Scene();
 	virtual ~Scene();
 };
-
 
 #endif /* SCENE_H_ */
