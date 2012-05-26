@@ -41,11 +41,12 @@ void Renderer::trace(Ray& ray, vector<Body> &objects, int n, Vector3d& color) {
 	int i = 0;
 	for (; i < 64; ++i) {
 
+		double t = getTickCount();
 		Body* hit = NULL;
 		mind = 99999999;
 		double d = 0;
-		for (size_t i = 0, lim = objects.size(); i < lim; ++i) {
-			Body &obj = objects[i];
+		for (size_t j = 0, lim = objects.size(); j < lim; ++j) {
+			Body &obj = objects[j];
 			d = obj.shape->intersect(ray);
 			if (d > 0 && d <= mind) {
 				mind = d;
@@ -63,8 +64,9 @@ void Renderer::trace(Ray& ray, vector<Body> &objects, int n, Vector3d& color) {
 		ray.source = point;
 		ray.direction = direction;
 
-		accColor += colorMask * (hit->material->emission);
+		accColor = accColor + colorMask * (hit->material->emission);
 		colorMask = colorMask * (hit->material->color);
+
 		if (hit->material->emission.sum() > 1)
 			break;
 	}

@@ -70,12 +70,7 @@ public:
 	double radius2;
 };
 
-inline Vector3d min(Vector3d a, Vector3d b) {
-	return Vector3d(min(a.x, b.x), min(a.y, b.y), min(a.z, b.z));
-}
-inline Vector3d max(Vector3d a, Vector3d b) {
-	return Vector3d(max(a.x, b.x), max(a.y, b.y), max(a.z, b.z));
-}
+
 
 class Cube: public IShape {
 public:

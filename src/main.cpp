@@ -77,17 +77,9 @@ objs	.push_back(
 					new Material(Vector3d(1.0, 1.0, 1.0),
 							Vector3d(1.29, 1.47, 1.6))));
 
-//	objs.push_back(
-//			Body(new Plane(Vector3d(0.0, 0.0, -1), 10),
-//					new Material(Vector3d(1.0, 1.0, 1.0),
-//							Vector3d(1.29, 1.47, 1.6))));
-
-	objs.push_back(
-			Body(new Sphere(Vector3d(0.0, -10e6, 0.0), 10e6 - 2.5),
-					new Material(Vector3d(0.5, 0.9, 0.5), Vector3d(0, 0, 0))));
 
 	Renderer renderer;
-	for (int i = 0; i < 10000; ++i) {
+	for (int i = 0; i < 1000; ++i) {
 
 		double t = getTickCount();
 		renderer.iterate(img, cam, objs);
