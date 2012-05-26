@@ -16,6 +16,9 @@ Renderer::~Renderer() {
 	// TODO Auto-generated destructor stub
 }
 
+#include <iostream>
+using namespace std;
+
 void Renderer::iterate(Mat& output, Camera &cam, Scene &scene) {
 	double w = output.cols;
 	double h = output.rows;
@@ -23,6 +26,7 @@ void Renderer::iterate(Mat& output, Camera &cam, Scene &scene) {
 	Vector3d *ptr = (Vector3d*) output.ptr(0);
 	for (double y = (1.0 * rand() / RAND_MAX) / h, ystep = 1.0 / h;
 			y < 0.9999999; y += ystep) {
+		cout<< "row"<<endl;
 		for (double x = (1.0 * rand() / RAND_MAX) / w, xstep = 1.0 / w;
 				x < 0.9999999; x += xstep) {
 			Ray ray = cam.getRay(x, y);
@@ -39,7 +43,7 @@ void Renderer::trace(Ray& ray, Scene &scene, int n, Vector3d& color) {
 
 	register Vector3d point, normal, direction;
 	int i = 0;
-	for (; i < 64; ++i) {
+	for (; i < 8; ++i) {
 
 		Material *material = NULL;
 		mind = 99999999;

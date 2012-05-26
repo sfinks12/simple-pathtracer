@@ -14,55 +14,56 @@
 
 using namespace std;
 
-
-class Triangle{
+class Triangle {
 public:
 	Triangle(Vector3d _v1, Vector3d _v2, Vector3d _v3) :
 			v1(_v1), v2(_v2), v3(_v3) {
 		normal = ((v3 - v2).cross(v1 - v2)).norm();
 		invnormal = normal * -1;
 		D = normal.dot(v1);
+		e1 = v2 - v1;
+		e2 = v3 - v1;
+
 	}
 
 	inline double intersect(Ray &ray) {
-
-		Vector3d e1 = v2 - v1;
-		Vector3d e2 = v3 - v1;
 
 		Vector3d pvec = ray.direction.cross(e2);
 
 		double det = e1.dot(pvec);
 
-		if (det < 0.1) {
-			return -1;
-		}
+//		if (det < 0.00000001 && det > -0.0000001) {
+//			return -1;
+//		}
+
+		double inv_det = 1.0 / det;
 
 		Vector3d tvec = ray.source - v1;
 
-		double u = tvec.dot(pvec);
+		double u = tvec.dot(pvec)*inv_det;
 
-		if (u < 0 || u > det)
+		if (u < 0 || u > 1)
 			return -1;
 
 		Vector3d qvec = tvec.cross(e1);
 
-		double v = ray.direction.dot(qvec);
+		double v = ray.direction.dot(qvec)*inv_det;
 
-		if (v < 0 || u + v > det)
+		if (v < 0 || u + v > 1)
 			return -1;
 
-		double t = e2.dot(qvec);
+		double t = e2.dot(qvec)*inv_det;
 
-		return t / det;
+		return t ;
 	}
 
 	inline Vector3d getNormal(Vector3d &point) {
-		return normal;
+		return invnormal;
 	}
 
 	Vector3d normal;
 	Vector3d invnormal;
-	Vector3d v1, v2, v3;
+	Vector3d v1, v2, v3, e1, e2;
 	double D;
 };
 

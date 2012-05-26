@@ -13,6 +13,11 @@
 
 using namespace std;
 
+class Vector3i {
+public:
+	int x, y, z;
+};
+
 class Vector3d {
 public:
 	double x, y, z;
@@ -45,6 +50,9 @@ public:
 	Vector3d operator/(Vector3d &b) const {
 		return Vector3d(x / b.x, y / b.y, z / b.z);
 	}
+	Vector3d operator/(double b) const {
+			return Vector3d(x / b, y / b, z / b);
+		}
 
 	Vector3d mult(const Vector3d &b) const {
 		return Vector3d(x * b.x, y * b.y, z * b.z);
